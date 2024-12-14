@@ -1,0 +1,18 @@
+
+resource "aws_subnet" "subnet_<###ITEM_NAME###>" {
+  vpc_id                  = "${aws_vpc.vpc_<###PARAM_1###>.id}"
+  cidr_block              = "<###PARAM_2###>"
+  availability_zone       = "<###PARAM_3###>"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "subnet_<###ITEM_NAME###>"
+  }
+}
+
+resource "aws_route_table_association" "rtbassoc_<###ITEM_NAME###>" {
+  subnet_id      = "${aws_subnet.subnet_<###ITEM_NAME###>.id}"
+  route_table_id = "${aws_route_table.rtb_<###PARAM_4###>.id}"
+}
+
+//lors de la cration du template de l isntance inclure map_public_ip_on_launch = false

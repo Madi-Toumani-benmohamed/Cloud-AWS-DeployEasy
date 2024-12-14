@@ -1,0 +1,65 @@
+# Déclaration du provider AWS
+provider "aws" {
+  region = "us-east-1" # Remplacer par votre région AWS préférée
+}
+
+# Définition de la VPC
+resource "aws_vpc" "vpc_<###ITEM_NAME###>" {
+  cidr_block = "<###PARAM_1###>" # Remplacez par un bloc CIDR adapté
+}
+
+# Définition du subnet
+resource "aws_subnet" "subnet_<###ITEM_NAME###>" {
+  vpc_id                  = aws_vpc.vpc_<###ITEM_NAME###>.id
+  cidr_block              = "<###PARAM_2###>" # Remplacez par un CIDR adapté pour le subnet
+  availability_zone       = "us-east-1a"  # Remplacez par une zone de disponibilité de votre choix
+  map_public_ip_on_launch = true
+}
+
+# Définition du groupe de sécurité
+resource "aws_security_group" "sg_<###ITEM_NAME###>" {
+  name        = "vm_security_group"
+  description = "Security group for VMs"  # Utiliser des caractères ASCII
+  vpc_id      = aws_vpc.vpc_<###ITEM_NAME###>.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Ou spécifiez un bloc d'IP plus restreint si besoin
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Déploiement des 5 instances EC2
+resource "aws_instance" "vm_<###ITEM_NAME###>" {
+  count                    = <###PARAM_3###>
+  ami                      = "ami-058bd2d568351da34"
+  key_name                 =  "<###PARAM_4###>" 
+  instance_type            = "t2.micro" # Remplacer par un type d'instance selon vos besoins
+  subnet_id                = aws_subnet.subnet_<###ITEM_NAME###>.id
+  vpc_security_group_ids   = [aws_security_group.sg_<###ITEM_NAME###>.id] # Remplacer security_group_ids par vpc_security_group_ids
+  user_data                = file("<###PARAM_5###>")
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "VM_<###ITEM_NAME###>-${count.index + 1}"
+  }
+}
+
+output "instance_public_ips" {
+  value = [for i in aws_instance.vm_<###ITEM_NAME###> : i.public_ip]
+}

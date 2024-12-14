@@ -1,0 +1,100 @@
+resource "aws_internet_gateway" "ig_<###ITEM_NAME###>" {
+    vpc_id = "${aws_vpc.vpc_<###PARAM_1###>.id}"
+
+    tags = {
+        "Name" = "ig_<###ITEM_NAME###>"
+    }    
+}
+
+
+resource "aws_route_table_association" "rtb_<###ITEM_NAME###>" {
+    subnet_id = "${aws_subnet.subnet_<###ITEM_NAME###>.id}"
+    route_table_id = "${aws_route_table.rtb_<###ITEM_NAME###>.id}"
+}
+
+resource "aws_route_table" "rtb_<###ITEM_NAME###>" {
+    vpc_id = "${aws_vpc.vpc_<###PARAM_1###>.id}"
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_internet_gateway.ig_<###ITEM_NAME###>.id}"
+    }
+
+    tags = {
+        "Name" = "rtb_<###ITEM_NAME###>"
+    } 
+}
+
+
+
+resource "aws_security_group" "sg_<###ITEM_NAME###>" {
+  vpc_id = "${aws_vpc.vpc_<###PARAM_1###>.id}"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    self        = "false"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "any"
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+tags = {
+    "Name" = "sg_<###ITEM_NAME###>"
+    }
+
+}
+
+resource "aws_subnet" "subnet_<###ITEM_NAME###>" {
+    vpc_id = "${aws_vpc.vpc_<###PARAM_1###>.id}"
+    cidr_block = "<###PARAM_2###>"
+    availability_zone = "us-east-1a"
+    map_public_ip_on_launch = true 
+
+    tags = {
+        "Name" = "<###PARAM_2###> - eu-east-1- <###ITEM_NAME###>"
+    }
+
+}
+
+
+ //---------ec2  creation 
+
+ resource "aws_instance" "ec2_<###ITEM_NAME###>" {
+   ami           = "ami-058bd2d568351da34"
+   instance_type = "t2.micro"
+   key_name      =  "<###PARAM_3###>" 
+   security_groups = ["${aws_security_group.sg_<###ITEM_NAME###>.id}"]
+   subnet_id     = "${aws_subnet.subnet_<###ITEM_NAME###>.id}"
+   user_data     = file("<###PARAM_4###>")
+  
+  
+
+  # root disk
+  root_block_device {
+    volume_size           = 20
+    volume_type           = "standard"
+    delete_on_termination = true
+    encrypted             = true
+  }  # extra disk
+  ebs_block_device {
+    device_name           = "/dev/xvda"
+    volume_size           = 20
+    volume_type           = "standard"
+    encrypted             = true
+    delete_on_termination = true
+  }
+
+  
+  
+  tags = {
+    Name = "ec2_<###ITEM_NAME###>"
+  }
+
+ }

@@ -1,0 +1,11 @@
+
+//------------------vpc
+
+resource "aws_vpc" "vpc_<###ITEM_NAME###>" {
+  cidr_block           = "<###PARAM_1###>"
+
+
+  tags = {
+    Name = "vpc_<###ITEM_NAME###>"
+  }
+}
