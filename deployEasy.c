@@ -20,7 +20,7 @@ void afficherMenu(int choix) {
     for (int i = 1; i <= max_choices; i++) {
         if (i == choix) {
             printf("-> %d. %s\n", i, 
-                (i == 1) ? "Configurer et déployer des ressources" : 
+                (i == 1) ? "Configurer les ressources" : 
                 (i == 2) ? "Quitter" :
                 (i == 3) ? "Démarrer un lab" : 
                 (i == 4) ? "Initialisation du provider" :
@@ -28,7 +28,7 @@ void afficherMenu(int choix) {
                 "Afficher de l'aide");
         } else {
             printf("   %d. %s\n", i, 
-                (i == 1) ? "Configurer et déployer des ressources" : 
+                (i == 1) ? "Configurer les ressources" : 
                 (i == 2) ? "Quitter" :
                 (i == 3) ? "Démarrer un lab" : 
                 (i == 4) ? "Initialisation du provider" :
@@ -41,12 +41,12 @@ void afficherMenu(int choix) {
 // Fonction pour afficher l'aide
 void afficherAide() {
     printf("\n=== Aide ===\n");
-    printf("1. Configurer et déployer des ressources :\n");
-    printf("   Permet de définir et déployer des ressources via Terraform.\n");
+    printf("1. Configurer les ressources :\n");
+    printf("   Permet de générer le script des ressources Terraform.\n");
     printf("2. Quitter :\n");
     printf("   Ferme le programme.\n");
     printf("3. Démarrer un lab :\n");
-    printf("   Lance un environnement prédéfini pour des tests ou exercices.\n");
+    printf("   Déploie les ressources via Terraform.\n");
     printf("4. Initialisation du provider :\n");
     printf("   Initialise le provider Terraform utilisé pour la gestion des ressources.\n");
     printf("5. Supprimer les ressources :\n");
@@ -67,7 +67,7 @@ int main() {
 
         switch (choix) {
             case 1:
-                printf("\nConfiguration et déploiement en cours...\n");
+                printf("\nQuelles ressources voulez vous ?...\n");
                 configurer_vm();
                 break;
             case 2:
@@ -106,7 +106,7 @@ void configurer_vm() {
     char params[MAX_PARAM_LENGTH][MAX_PARAM_LENGTH];
     int param_count = 0;
 
-    printf("\nTypes de Ressources disponibles : aws_instance, bastion, provider, serveur_web, vpc\n");
+    printf("\nTypes de Ressources disponibles : aws_instance, infra_complete, provider, serveur_web, vpc\n");
     printf("\nEntrez le type de Ressource (en miniscule) : ");
     getchar();  // Pour consommer le '\n' restant dans le buffer
     fgets(type_item, sizeof(type_item), stdin);
@@ -199,7 +199,7 @@ void demarrer_lab() {
         return;
     }
 
-    printf("\nDéploiement du lab terminé avec succès.\n");
+    printf("\nDéploiement des ressources terminé avec succès.\n");
 }
 
 void supprimer_ressources() {
@@ -234,6 +234,13 @@ void afficher_params_disponibles(const char *type_item) {
     } else if (strcmp(type_item, "vpc") == 0) {
         printf("\nParamètres disponibles pour le VPC :\n");
         printf("  - subnet_cidr : CIDR du sous-réseau (ex : 10.0.1.0/24)\n");
+    } else if (strcmp(type_item, "infra_complete") == 0) {
+        printf("\nParamètres disponibles pour le Infra complète :\n");
+        printf("  - cidr block VPC : CIDR du VPC (ex : 10.0.0.0/16)\n");
+        printf("  - subnet_cidr : CIDR du sous-réseau (ex : 10.0.1.0/24)\n");
+        printf("  - Nombre d'instance : Combien d'instance tu veux ?\n");
+        printf("  - key_name : Nom de la clé SSH\n");
+        printf("  - user_data : Fichier user_data\n");
     } 
     else {
         printf("\nType de ressource inconnu. Aucun paramètre spécifique disponible.\n");
