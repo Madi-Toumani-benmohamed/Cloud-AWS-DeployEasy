@@ -8,6 +8,7 @@
 - **Bannière personnalisée** : Affiche une bannière stylée lors du démarrage du programme pour un accueil immersif.
 - **Déploiement d'infrastructure de TP** : Permet de déployer des environnements de travail pour des TP de pentesting, de programmation, et autres travaux pratiques.
 - **Interface en ligne de commande** : Utilise des entrées de commandes et des options pour automatiser le déploiement et l'exécution des tâches spécifiques aux environnements d'étude.
+- **Provider** : Pour l'instant le projet ne supporte que le provider AWS, mais les autres provider sont en cours de développement!
 
 ## Objectif à Court Terme
 
@@ -74,7 +75,7 @@ Voici un exemple de sortie du programme :
                Welcome to Easy Deploy Program!               
                 *** Version 1.0 ***                           
 **************************************************************
-
+  ```
 ### Commandes supplémentaires
 
 - **Nettoyage du projet** : Pour supprimer les fichiers générés (objets et exécutable), utilise la commande suivante :
