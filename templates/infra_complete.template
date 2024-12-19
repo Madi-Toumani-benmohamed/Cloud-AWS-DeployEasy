@@ -16,6 +16,26 @@ resource "aws_subnet" "subnet_<###ITEM_NAME###>" {
   map_public_ip_on_launch = true
 }
 
+# Passerelle Internet et routage
+resource "aws_internet_gateway" "igw_<###ITEM_NAME###>" {
+  vpc_id = aws_vpc.vpc_<###ITEM_NAME###>.id
+}
+
+resource "aws_route_table" "route_table_<###ITEM_NAME###>" {
+  vpc_id = aws_vpc.vpc_<###ITEM_NAME###>.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw_<###ITEM_NAME###>.id
+  }
+}
+
+resource "aws_route_table_association" "rta_<###ITEM_NAME###>" {
+  subnet_id      = aws_subnet.subnet_<###ITEM_NAME###>.id
+  route_table_id = aws_route_table.route_table_<###ITEM_NAME###>.id
+}
+
+
 # Définition du groupe de sécurité
 resource "aws_security_group" "sg_<###ITEM_NAME###>" {
   name        = "vm_security_group"
